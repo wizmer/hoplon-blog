@@ -1,0 +1,129 @@
+(page "index.html")
+
+
+(defelem blog-post
+  [attr _]
+  [(h1 :class "mt-4" (attr :title))
+   (p :class "posted" " by "(a :href "#" (attr :creator)))
+   (hr)
+   (p "Posted on " (attr :date))
+   (hr)
+   (img :class "img-fluid rounded" :src "https://hoplon.io/images/logos/hoplon-logo.png" :alt "The hoplon logo")
+   (hr)
+   (p :class "lead"
+      "This is an attempt at a ClojureScript-power blog based on the " (a :href "https://hoplon.io" "Hoplon") " library.")
+   (p "The basic pillars of Hoplon are:"
+      (ul (li "A DSL to represent HTML using Clojure datastructure")
+          (li "Javelin, a library for spreadshit-like dataflow programming."
+              "It is used to manage the state of the web application."
+              "You define cells, input cells and formulat cells, whenever input cell values change formulat cells are automatically updated.")))
+   (hr)])
+
+(defc comments [{:text "A first" :user "Michel" :date "2017-03-10"}
+                {:text "A second" :user "Joe"}])
+
+(defelem form-group
+  [attr children]
+  (div :class "form-group" attr children))
+
+(defelem comment-form
+  [_ _]
+  (println "building defelem")
+  (let [new-item (cell "")
+        user (cell "")]
+    (div :class "card my-4"
+       (h5 :class "card-header" "Leave a Comment:")
+       (div :class "card-body")
+       (form
+        ;; (form-group (label :for "user-comment" "Username: ")
+        ;;             (input :class "form-control"
+        ;;                    :id "user-comment"
+        ;;                    :type "text"
+        ;;                    :value user
+        ;;                    :keyup #(reset! user @%)))
+        
+        ;; (form-group (label :for "user-comment" "Username: ")
+        ;;             (input :class "form-control"
+        ;;                    :id "user-comment"
+        ;;                    :type "text"
+        ;;                    :value user
+        ;;                    :keyup #(reset! user @%)))
+
+        (form-group (label :for "text-comment" "Comment: ")
+                    (textarea :class "form-control" :rows "3"
+                              :id "text-comment"
+                              :type "text"
+                              :value new-item
+                              :keyup #(reset! new-item @%)))
+
+
+        (p (text "Value of text input: ~{user}"))
+
+        (button :click #(dosync
+                         (swap! comments conj {:text @new-item :user @user})
+                         (println @comments)
+                         (reset! new-item "")
+                         (reset! user ""))
+                :type "submit" :class "btn btn-primary" "Submit")))))
+
+
+(defelem comment-post
+  [{:keys [text user date nested-comments]} _]
+  (div :class "media mt-4"
+       (img :class "d-flex mr-3 rounded-circle" :src "http://placehold.it/50x50" :alt "")
+       (div :class "media-body"
+            (h5 :class "mt-0" user " at " date)
+            text
+            nested-comments)))
+
+
+(defelem comments-display
+  [_ _]
+  (for-tpl  [c comments] (comment-post @c)))
+
+
+(defelem blog-container
+  [_ _]
+  (div :class "container"
+       (div :class "row"
+            (div :class "col-lg-8"
+                 (blog-post :title "A hoplon blog !"
+                            :creator "Wizmer"
+                            :date "August 15, 2017 at 3:00 PM")
+                 (comment-form)
+                 (comments-display)))))
+
+(defelem navbar
+  [_ children]
+  (nav :class "navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+       (a :class "navbar-brand" :href "#" "Start Bootstrap")
+       (button :class "navbar-toggler" :type "button" :data-toggle "collapse" :data-target "#navbarResponsive" :aria-controls "navbarResponsive" :aria-expanded "false" :aria-label "Toggle navigation"
+               (span :class "navbar-toggler-icon"))
+       (div  :id "navbarResponsive"
+             :class "collapse navbar-collapse"
+             (ul :class "navbar-nav ml-auto"
+                 (for-tpl [item children] (li :class "nav-item" (a :class "nav-link" :href "#" item)))))))
+
+
+
+(html
+ (head
+  (link :rel "stylesheet" :href "bootstrap/css/bootstrap.min.css")
+  (link :href "app.css" :rel "stylesheet" :type "text/css"))
+
+ (body
+  (navbar "Item 1" "Item 2" "Item 3" "Item 4")
+  (blog-container)
+  (text comments)
+  (footer :class "py-5 bg-dark"
+          (mapv #(p :class "m-0 text-center text-white" %)
+                ["A hoplon-powered blog template inspired from: " (a :href "https://github.com/BlackrockDigital/startbootstrap-blog-post" "https://github.com/BlackrockDigital/startbootstrap-blog-post")
+                 (a :href "#" "Back to top")]))
+
+  ;; Bootstrap core JavaScript
+  (script :src "jquery/jquery.min.js")
+  (script :src "popper/popper.min.js")
+  (script :src "bootstrap/js/bootstrap.min.js")))
+
+
+
