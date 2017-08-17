@@ -1,0 +1,42 @@
+(page "admin.html"
+      (:require [blog.core :refer [layout]]
+                [blog.html :refer [form-group]]))
+
+
+
+(defelem comment-form
+  [_ _]
+  (println "building defelem")
+  (let [new-item (cell "")
+        user (cell "")]
+    (div :class "card my-4"
+       (h5 :class "card-header" "New post")
+       (div :class "card-body")
+       (form
+        (form-group ;; (label :for "text-comment" "Comment: ")
+                    (textarea :class "form-control" :rows "3"
+                              :id "text-comment"
+                              :type "text"
+                              :value new-item
+                              :keyup #(reset! new-item @%)))
+
+        (button :click #(dosync
+                         (println "New post published !")
+                         (reset! new-item "")
+                         (reset! user ""))
+                :type "submit" :class "btn btn-primary" "Publish")))))
+
+(defelem admin-container
+  [_ _]
+  (div :class "container"
+       (div :class "row"
+            (div :class "col-lg-8"
+                 (comment-form)))))
+
+
+
+
+
+
+
+(layout (admin-container))

@@ -1,0 +1,35 @@
+(ns blog.core)
+
+(defelem navbar
+  [_ children]
+  (nav :class "navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+       (a :class "navbar-brand" :href "#" "Start Bootstrap")
+       (button :class "navbar-toggler" :type "button" :data-toggle "collapse" :data-target "#navbarResponsive" :aria-controls "navbarResponsive" :aria-expanded "false" :aria-label "Toggle navigation"
+               (span :class "navbar-toggler-icon"))
+       (div  :id "navbarResponsive"
+             :class "collapse navbar-collapse"
+             (ul :class "navbar-nav ml-auto"
+                 (for-tpl [item children] (li :class "nav-item" (a :class "nav-link" :href (@item :href) (@item :title))))))))
+
+
+
+(defelem layout
+  [_ children]
+  (html
+   (head
+    (link :rel "stylesheet" :href "bootstrap/css/bootstrap.min.css")
+    (link :href "app.css" :rel "stylesheet" :type "text/css"))
+
+   (body
+    (navbar [{:title "Home" :href "index.html"}
+             {:title "Admin" :href "admin.html"}])
+    children
+    (footer :class "py-5 bg-dark"
+            (mapv #(p :class "m-0 text-center text-white" %)
+                  ["A hoplon-powered blog template inspired from: " (a :href "https://github.com/BlackrockDigital/startbootstrap-blog-post" "https://github.com/BlackrockDigital/startbootstrap-blog-post")
+                   (a :href "#" "Back to top")]))
+
+    ;; Bootstrap core JavaScript
+    (script :src "jquery/jquery.min.js")
+    (script :src "popper/popper.min.js")
+    (script :src "bootstrap/js/bootstrap.min.js"))))

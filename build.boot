@@ -9,7 +9,12 @@
                   [hoplon/hoplon             "6.0.0-alpha17"]
                   [org.clojure/clojure       "1.8.0"]
                   [org.clojure/clojurescript "1.9.293"]
-                  [tailrecursion/boot-jetty  "0.1.3"]]
+                  [pandeiro/boot-http        "0.7.3"]
+                  [hoplon/castra             "3.0.0-alpha4"]
+                  [compojure                 "1.6.0-beta1"]
+                  [ring                      "1.5.0"]
+                  [javax.servlet/servlet-api "2.5"]
+                  [ring/ring-defaults        "0.2.1"]]
   :source-paths #{"src"}
   :asset-paths  #{"assets"})
 
@@ -18,19 +23,22 @@
   '[adzerk.boot-reload       :refer [reload]]
   '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
   '[hoplon.boot-hoplon       :refer [hoplon prerender]]
-  '[tailrecursion.boot-jetty :refer [serve]])
+  '[pandeiro.boot-http    :refer [serve]])
 
 (deftask dev
-  "Build blog for local development."
+  "Build ws-simple for local development."
   []
   (comp
-    (watch)
-    (speak :theme "woodblock")
-    (hoplon)
-    (reload)
-    ;; (cljs-repl)
-    (cljs)
-    (serve :port 8000)))
+   (serve
+    :handler 'app.handler/app
+    :reload true
+    :port 8000)
+   (watch)
+   (speak)
+   (hoplon)
+   (reload)
+   (cljs-repl)
+   (cljs)))
 
 (deftask prod
   "Build blog for production deployment."
