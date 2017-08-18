@@ -1,5 +1,14 @@
 (ns app.api
-  (:require [castra.core :refer [defrpc]]))
+  (:require
+   [app.datomic.api :refer [fetch-random-record fetch-record update-record!]]
+   [castra.core :refer [defrpc]]))
 
-(defrpc get-state []
-  {:random (rand-int 100)})
+(defrpc get-random-user []
+  (fetch-random-record))
+
+(defrpc get-user [id]
+  (fetch-record id))
+
+(defrpc update-user [user-data]
+  {:rpc/pre [(update-record! user-data)]}
+  (fetch-record (:db/id user-data)))

@@ -3,10 +3,8 @@
                 [blog.html :refer [form-group]]
                 [app.rpc :as rpc]))
 
-(defc= random rpc/random-number)
-
-(rpc/init)
-
+(rpc/get-random-user)
+(defc= random rpc/state)
 
 (defelem blog-post
   [attr _]
@@ -86,6 +84,8 @@
                             :creator "Wizmer"
                             :date "August 15, 2017 at 3:00 PM")
                  (p (text "Random Datomic data ~{random}"))
+                 (button :click #(rpc/get-random-user)
+                         "gogo")
                  (comment-form)
                  (comments-display)))))
 

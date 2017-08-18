@@ -9,14 +9,17 @@
                   [hoplon/hoplon             "6.0.0-alpha17"]
                   [org.clojure/clojure       "1.8.0"]
                   [org.clojure/clojurescript "1.9.293"]
+                  [environ                   "1.0.1"]
+                  [mount                     "0.1.7"]
                   [pandeiro/boot-http        "0.7.3"]
                   [hoplon/castra             "3.0.0-alpha4"]
                   [compojure                 "1.6.0-beta1"]
                   [ring                      "1.5.0"]
                   [javax.servlet/servlet-api "2.5"]
+                  [com.datomic/datomic-free  "0.9.5344"]
                   [ring/ring-defaults        "0.2.1"]]
   :source-paths #{"src"}
-  :asset-paths  #{"assets"})
+  :resource-paths  #{"assets"})
 
 (require
   '[adzerk.boot-cljs         :refer [cljs]]
@@ -30,6 +33,7 @@
   []
   (comp
    (serve
+    :init 'app.datomic.db/init
     :handler 'app.handler/app
     :reload true
     :port 8000)
