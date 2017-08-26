@@ -3,91 +3,30 @@
                 [blog.html :refer [form-group]]
                 [app.rpc :as rpc]))
 
-(rpc/get-random-user)
-(defc= random rpc/state)
 
-(defelem blog-post
-  [attr _]
-  [(h1 :class "mt-4" (attr :title))
-   (p :class "posted" " by "(a :href "#" (attr :creator)))
-   (hr)
-   (p "Posted on " (attr :date))
-   (hr)
-   (img :class "img-fluid rounded" :src "https://hoplon.io/images/logos/hoplon-logo.png" :alt "The hoplon logo")
-   (hr)
+(rpc/get-list-of-posts)
+
+(defc= posts-list rpc/posts-list)
+
+(defelem introduction-container
+  [_ _]
+  [(h1 :class "mt-4" (img :class "img-fluid rounded" :src "https://hoplon.io/images/logos/hoplon-logo.png" :alt "The hoplon logo" :width "100" :height "100") "A hoplon blog template")
    (p :class "lead"
-      "This is an attempt at a ClojureScript-power blog based on the " (a :href "https://hoplon.io" "Hoplon") " library.")
-   (p "The basic pillars of Hoplon are:"
-      (ul (li "A DSL to represent HTML using Clojure datastructure")
-          (li "Javelin, a library for spreadshit-like dataflow programming."
-              "It is used to manage the state of the web application."
-              "You define cells, input cells and formula cells, whenever input cell values change formulat cells are automatically updated.")))
+      "This is an attempt at a ClojureScript-powered blog based on the " (a :href "https://hoplon.io" "Hoplon") " library. The backend part is using " (a :href "https://datomic.com" "Datomic"))
+   (p "You are currently on the HOME page where you can see the list of blog posts.")
+   (br)
+   (p "Go to the ADMIN page to create new posts.")
    (hr)])
-
-(defc comments [{:text "A first" :user "Michel" :date "2017-03-10"}
-                {:text "A second" :user "Joe"}])
-
-
-
-(defelem comment-form
-  [_ _]
-  (println "building defelem")
-  (let [new-item (cell "")
-        user (cell "")]
-    (div :class "card my-4"
-       (h5 :class "card-header" "Leave a Comment:")
-       (div :class "card-body")
-       (form
-        (form-group (label :for "user-comment" "Username: ")
-                    (input :class "form-control"
-                           :id "user-comment"
-                           :type "text"
-                           :value user
-                           :keyup #(reset! user @%)))
-
-        (form-group (label :for "text-comment" "Comment: ")
-                    (textarea :class "form-control" :rows "3"
-                              :id "text-comment"
-                              :type "text"
-                              :value new-item
-                              :keyup #(reset! new-item @%)))
-
-        (button :click #(dosync
-                         (swap! comments conj {:text @new-item :user @user})
-                         (println @comments)
-                         (reset! new-item "")
-                         (reset! user ""))
-                :type "submit" :class "btn btn-primary" "Submit")))))
-
-
-(defelem comment-post
-  [{:keys [text user date nested-comments]} _]
-  (div :class "media mt-4"
-       (img :class "d-flex mr-3 rounded-circle" :src "http://placehold.it/50x50" :alt "")
-       (div :class "media-body"
-            (h5 :class "mt-0" user " at " date)
-            text
-            nested-comments)))
-
-
-(defelem comments-display
-  [_ _]
-  (for-tpl  [c comments] (comment-post @c)))
-
 
 (defelem blog-container
   [_ _]
   (div :class "container"
        (div :class "row"
             (div :class "col-lg-8"
-                 (blog-post :title "A hoplon blog !"
-                            :creator "Wizmer"
-                            :date "August 15, 2017 at 3:00 PM")
-                 (p (text "Random Datomic data ~{random}"))
-                 (button :click #(rpc/get-random-user)
-                         "gogo")
-                 (comment-form)
-                 (comments-display)))))
+                 (introduction-container)
+                 (h1 :class "mt-4" "List of blog posts")
+                 (ul (for-tpl [item posts-list] (li (a :href (str "article.html#" (@item 0)) (@item 1) ))))))))
 
 
-(layout (blog-container))
+(layout
+ (blog-container))

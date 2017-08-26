@@ -1,28 +1,43 @@
 (page "admin.html"
       (:require [blog.core :refer [layout]]
+                [app.rpc :as rpc]
                 [blog.html :refer [form-group]]))
 
+(defc= posts rpc/blog-post)
 
+(rpc/get-post)
 
-(defelem comment-form
+(defelem new-post-form
   [_ _]
   (println "building defelem")
-  (let [new-item (cell "")
+  (let [post-body (cell "")
+        post-title (cell "")
         user (cell "")]
     (div :class "card my-4"
        (h5 :class "card-header" "New post")
        (div :class "card-body")
        (form
-        (form-group ;; (label :for "text-comment" "Comment: ")
+        (form-group (label :for "post-title" "Title: ")
+         (input :class "form-control"
+                   :id "post-title"
+                   :type "text"
+                   :value post-title
+                   :keyup #(reset! post-title @%)))
+
+        (form-group (label :for "post-body" "body: ")
                     (textarea :class "form-control" :rows "3"
-                              :id "text-comment"
-                              :type "text"
-                              :value new-item
-                              :keyup #(reset! new-item @%)))
+                           :id "post-body"
+                           :type "text"
+                           :value post-body
+                           :keyup #(reset! post-body @%)))
 
         (button :click #(dosync
                          (println "New post published !")
-                         (reset! new-item "")
+                         (rpc/create-post {:post/title @post-title
+                                           :post/body @post-body
+                                           :post/creation-user "Janno"})
+                         (reset! post-title "")
+                         (reset! post-body "")
                          (reset! user ""))
                 :type "submit" :class "btn btn-primary" "Publish")))))
 
@@ -31,7 +46,9 @@
   (div :class "container"
        (div :class "row"
             (div :class "col-lg-8"
-                 (comment-form)))))
+                 (p (text "Random Datomic data ~{posts}"))
+
+                 (new-post-form)))))
 
 
 
