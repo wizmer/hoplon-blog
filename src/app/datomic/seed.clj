@@ -1,6 +1,7 @@
 (ns app.datomic.seed
   (:require
    [datomic.api :as d]
+   [clj-time.core :refer [now]]
    [clojure.string :refer [lower-case]]))
 
 (def blog-owner "Benoit Coste")
@@ -76,6 +77,13 @@
                       :db.install/_attribute :db.part/db}
 
                      {:db/id                 #db/id[:db.part/db]
+                      :db/ident              :post/creation-datetime
+                      :db/valueType          :db.type/instant
+                      :db/cardinality        :db.cardinality/one
+                      :db/doc                "The user who created the post"
+                      :db.install/_attribute :db.part/db}
+
+                     {:db/id                 #db/id[:db.part/db]
                       :db/ident              :post/edition-user
                       :db/valueType          :db.type/string
                       :db/cardinality        :db.cardinality/one
@@ -83,6 +91,13 @@
                       :db.install/_attribute :db.part/db}
 
                      {:db/id                 #db/id[:db.part/db]
+                      :db/ident              :post/edition-datetime
+                      :db/valueType          :db.type/instant
+                      :db/cardinality        :db.cardinality/one
+                      :db/doc                "The last user who edited the post"
+                      :db.install/_attribute :db.part/db}
+
+                    {:db/id                 #db/id[:db.part/db]
                       :db/ident              :post/uri
                       :db/valueType          :db.type/string
                       :db/cardinality        :db.cardinality/one
@@ -111,6 +126,7 @@
   [conn title]
   (let [post-id (insert-data conn {:post/body  "Nullam eu ante vel est convallis dignissim.  Fusce suscipit, wisi nec facilisis facilisis, est dui fermentum leo, quis tempor ligula erat quis odio.  Nunc porta vulputate tellus.  Nunc rutrum turpis sed pede.  Sed bibendum.  Aliquam posuere.  Nunc aliquet, augue nec adipiscing interdum, lacus tellus malesuada massa, quis varius mi purus non odio.  Pellentesque condimentum, magna ut suscipit hendrerit, ipsum augue ornare nulla, non luctus diam neque sit amet urna.  Curabitur vulputate vestibulum lorem.  Fusce sagittis, libero non molestie mollis, magna orci ultrices dolor, at vulputate neque nulla lacinia eros.  Sed id ligula quis est convallis tempor.  Curabitur lacinia pulvinar nibh.  Nam a sapien."
                                    :post/creation-user "Benoit Coste"
+                                   :post/creation-datetime (java.util.Date.)
                                    :post/title         title})]
     (insert-data conn {:comment/post-id post-id
                        :comment/user blog-owner

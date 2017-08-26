@@ -12,9 +12,8 @@
   [_ _]
   [(h1 :class "mt-4" (img :class "img-fluid rounded" :src "https://hoplon.io/images/logos/hoplon-logo.png" :alt "The hoplon logo" :width "100" :height "100") "A hoplon blog template")
    (p :class "lead"
-      "This is an attempt at a ClojureScript-powered blog based on the " (a :href "https://hoplon.io" "Hoplon") " library. The backend part is using " (a :href "https://datomic.com" "Datomic"))
+      "This is an attempt at a ClojureScript-powered blog based on the " (a :href "https://hoplon.io" "Hoplon") " library. The database on the server side is powered by " (a :href "https://datomic.com" "Datomic"))
    (p "You are currently on the HOME page where you can see the list of blog posts.")
-   (br)
    (p "Go to the ADMIN page to create new posts.")
    (hr)])
 
