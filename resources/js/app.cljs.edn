@@ -1,0 +1,3 @@
+{:require  [reagent-blog.app]
+ :init-fns [reagent-blog.app/init]
+ :compiler-options {:asset-path "js/app.out"}}
